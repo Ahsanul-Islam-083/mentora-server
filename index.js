@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
@@ -31,7 +32,13 @@ async function run() {
             res.send(result);
             console.log(result);
         });
-
+        
+        app.get('/featured', async (req, res) => {
+            const cursor = coursesCollection.find().limit(4);
+            const result = await cursor.toArray();
+            res.send(result);
+            // console.log(result);
+        });
         app.get('/courses/:coursId', async (req, res) => {
             const { coursId } = req.params;
             const result = await coursesCollection.findOne({ _id: new ObjectId(coursId) });
