@@ -136,13 +136,13 @@ async function run() {
         app.delete("/enrollments/:id", verifyToken, async (req, res) => {
             const { id } = req.params;
             const enrollment = await enrollmentCollection.findOne({ _id: new ObjectId(id)});
-            const courseId = enrollment?.coursId;
-            
+            const courseId = enrollment?.courseId;
+
             const result = await enrollmentCollection.deleteOne({ _id: new ObjectId(id) });
 
             await coursesCollection.updateOne(
-                {_id: courseId},
-                {$inc: {enrollCount: -1}}
+                { _id: new ObjectId(courseId) },
+                { $inc: { enrollCount: -1 } }
             )
 
             res.send(result);
