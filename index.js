@@ -47,13 +47,19 @@ const verifyToken = async (req, res, next) => {
 async function run() {
     try {
         // Connect the client to the server (optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
 
         const db = client.db('mentoradb');
         const coursesCollection = db.collection('courses');
         const enrollmentCollection = db.collection('enrollments');
+
+        app.post('/courses', verifyToken, async (req, res) => {
+            const data = req.body;
+            const result = await coursesCollection.insertOne(data);
+            res.send(result);
+        })
 
         app.get('/courses', async (req, res) => {
             const { search } = req.query;
@@ -133,7 +139,7 @@ async function run() {
             res.send(result);
         })
 
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
